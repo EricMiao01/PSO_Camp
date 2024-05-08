@@ -502,11 +502,12 @@ namespace PSOLib
             {
                 if (_ParticleCyclicStatus[i] == 0) continue; // 一般粒子不做任何變動;
 
+                /*
                 if (_swarm.GroupBest.Convx > 0.0)
                 {
                     if (bToExpi) // if (True) >>> 全部粒子均變為 Expi 模式 (!? 也包括原本設定 "永遠" 為PSO表現的粒子!? )
                     {
-                        _ParticleCyclicStatus[i] = 1;
+                        _ParticleCyclicStatus[i] = 2;
                         _ParticalStag[i] = 0;
                         //break;
                     }
@@ -514,16 +515,17 @@ namespace PSOLib
                         _ParticleCyclicStatus[i] = 2;
                         //break;
                 }
-                //else
-                //{
-                //    if (bToExpi) // if (True) >>> 全部粒子均變為 Expi 模式 (!? 也包括原本設定 "永遠" 為PSO表現的粒子!? )
-                //    {
-                //        _ParticleCyclicStatus[i] = 1;
-                //        //_ParticalStag[i] = 0;
-                //    }
-                //    else
-                //        _ParticleCyclicStatus[i] = 2;
-                //}
+                else
+                {
+                    if (bToExpi) // if (True) >>> 全部粒子均變為 Expi 模式 (!? 也包括原本設定 "永遠" 為PSO表現的粒子!? )
+                    {
+                        _ParticleCyclicStatus[i] = 1;
+                        //_ParticalStag[i] = 0;
+                    }
+                    else
+                        _ParticleCyclicStatus[i] = 2;
+                }
+                */
             }
         }
 
