@@ -107,7 +107,7 @@ namespace PSOLib
             return nRet;
         }
 
-        public static double Sigmoid(double x, double a = 0.1, double b = 50.0)
+        public static double Sigmoid(double x, double a = 10, double b = 0.5)
         {
             return 1/(1 + Math.Exp(-a*(x-b)));
         }

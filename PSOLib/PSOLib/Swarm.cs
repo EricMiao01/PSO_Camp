@@ -110,6 +110,9 @@ namespace PSOLib
         //public bool IsFeasible;
         public int ParticleType;
         public int ID;
+
+        // memroy region
+        /* ===================== */
         public double[] MemoryC1;
         public double[] MemoryC2;
         public double[] MemoryW;
@@ -117,6 +120,14 @@ namespace PSOLib
         public double C1;
         public double C2;
         public double W;
+
+        public double[] SuccessC1;
+        public double[] SuccessC2;
+        public double[] ObjDelta;
+        public int SuccessCounter;
+
+        public int ConvCounter;
+        /* ===================== */
 
         public double[] DimensionC1;
         public double[] DimentionC2;
@@ -143,7 +154,14 @@ namespace PSOLib
             W = 1.0;
             MemoryIndicator = 0;
 
-        }
+            // 間隔五次紀錄平均的成功參數
+            SuccessC1 = new double[5];
+            SuccessC2 = new double[5];
+            ObjDelta = new double[5];
+            SuccessCounter = 0;
+
+            ConvCounter = 0;
+    }
         public void FlyBack()
         {
             for (int i = 0; i < X.Length; i++)

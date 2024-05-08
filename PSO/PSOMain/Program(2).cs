@@ -21,25 +21,12 @@ namespace PSOMain
             // *** CEC2020 series ***
             List<Problem> problems = new List<Problem>
             {
-                //new RC15_SpeedReducer(),
-                //new RC16_IndustRefrig(),
-                //new RC17_SpringDesign(),
-                //new RC18_PressureVessel(),
-                //new RC19_WeldedBeam(),
-                //new RC20_ThreebarTruss(),
-                new RC21_DiskClutch(),
-                new RC22_PlanetaryGear(),
-                new RC23_StepconePulley(),
-                new RC24_RobotGripper(),
-                new RC25_ThrustBearing(),
-                new RC26_GearBox(),
-                new RC27_10barTruss(),
-                new RC28_RollingBearing(),
-                new RC29_GasCompressor(),
-                new RC30_CompressionString(),
-                new RC31_GearTrain(),
-                new RC32_Himmelblau(),
-                new RC33_Topology(),
+                new RC15_SpeedReducer(),
+                new RC16_IndustRefrig(),
+                new RC17_SpringDesign(),
+                new RC18_PressureVessel(),
+                new RC19_WeldedBeam(),
+                new RC20_ThreebarTruss()
             };
             //RC15_SpeedReducer prob = new RC15_SpeedReducer(); // 2994.4244, 2892.81316343172, Convx:0.0909 (OK)
             //RC16_IndustRefrig prob = new RC16_IndustRefrig(); // 0.163479, 0.011720461421122, Convx:0.0666 -> 0.032213
@@ -74,7 +61,7 @@ namespace PSOMain
             int probCounter = 0;
             int experimentNumber = 10;
 
-            bool isTesting = true; // true: 測試; false: 實驗
+            bool isTesting = false; // true: 測試; false: 實驗
             if (isTesting) experimentNumber = 1; // 測試就只跑一次
 
             //double[] MutateRateArray = { 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015 };
