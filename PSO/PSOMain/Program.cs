@@ -72,9 +72,9 @@ namespace PSOMain
 
             int problemNumber = problems.Count();
             int probCounter = 0;
-            int experimentNumber = 10;
+            int experimentNumber = 20;
 
-            bool isTesting = true; // true: 測試; false: 實驗
+            bool isTesting = false; // true: 測試; false: 實驗
             if (isTesting) experimentNumber = 1; // 測試就只跑一次
 
             //double[] MutateRateArray = { 0.005, 0.006, 0.007, 0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015 };
