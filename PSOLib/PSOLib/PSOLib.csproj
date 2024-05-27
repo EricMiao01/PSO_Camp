@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cyclic - 複製.cs" />
+    <Compile Include="DECyc - 複製.cs" />
     <Compile Include="DENLP.cs" />
     <Compile Include="NLP.cs" />
     <Compile Include="PSO.cs" />

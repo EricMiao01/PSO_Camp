@@ -21,7 +21,7 @@ namespace PSOMain
             // *** CEC2020 series ***
             List<Problem> problems = new List<Problem>
             {
-                //new RC15_SpeedReducer(),
+                new RC15_SpeedReducer(),
                 //new RC16_IndustRefrig(),
                 //new RC17_SpringDesign(),
                 //new RC18_PressureVessel(),
@@ -101,9 +101,11 @@ namespace PSOMain
                                 // 絕對要有的, 在建構時傳入;
                                 //PSO pso = new PSO(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
                                 //NLP pso = new NLP(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
-                                Cyclic pso = new Cyclic(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
-                                //Cyclic_D pso = new Cyclic_D(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
+                                //Cyclic pso = new Cyclic(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
                                 //DECyc pso = new DECyc(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
+
+                                //Cyclic_D pso = new Cyclic_D(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
+                                CycDE pso = new CycDE(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
 
                                 // Cyclic系列專用參數:
                                 //pso.StagThreshold = 100;    // 幾個迭代無異動就視為停滯粒子;

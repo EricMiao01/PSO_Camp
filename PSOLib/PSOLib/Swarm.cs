@@ -108,6 +108,7 @@ namespace PSOLib
         public double LastFitness;
         public double LastConvx;
         //public bool IsFeasible;
+        public bool IsUpdate;
         public int ParticleType;
         public int ID;
 
@@ -141,8 +142,9 @@ namespace PSOLib
             Convx = 0;
             LastFitness = Double.NaN;
             LastConvx = 0;
+            IsUpdate = false;
             //IsFeasible = false;
-            ParticleType = 0;
+            ParticleType = 1;
             ID = -1;
 
             // 個體根據過去經驗決定自我學習與社會學習的程度
