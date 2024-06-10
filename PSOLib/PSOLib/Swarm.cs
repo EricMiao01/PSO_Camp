@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 
 namespace PSOLib
@@ -224,11 +225,26 @@ namespace PSOLib
         public bool IsBetter(PSOTuple tuple, double epsilon=0.0)
         {
 
-            // 要加入 epsilon 技術的話可以新增在這邊!!!!!!!!!! 以後要 adaptive
-            if (this.Convx < tuple.Convx) return true;
-            if (this.Convx == tuple.Convx && this.Fitness < tuple.Fitness) return true;
-            //epsilon = 0.00;
-            if ((this.Convx < epsilon && tuple.Convx < epsilon) && this.Fitness < tuple.Fitness) return true;
+            //// 要加入 epsilon 技術的話可以新增在這邊!!!!!!!!!! 以後要 adaptive
+            //if (this.Convx < tuple.Convx) return true;
+            //if (this.Convx == tuple.Convx && this.Fitness < tuple.Fitness) return true;
+            ////epsilon = 0.00;
+            //if ((this.Convx < epsilon && tuple.Convx < epsilon) && this.Fitness < tuple.Fitness) return true;
+            //return false;
+
+            double this_conv;
+            double tuple_conv;
+            if (this.Convx - epsilon > 0.0)
+                this_conv = this.Convx - epsilon;
+            else
+                this_conv = 0.0;
+            if (tuple.Convx - epsilon > 0.0)
+                tuple_conv = tuple.Convx - epsilon;
+            else
+                tuple_conv = 0.0;
+
+            if (this_conv < tuple_conv) return true;
+            if (this_conv == tuple_conv && this.Fitness < tuple.Fitness) return true;
             return false;
 
             //double epsilon = 0.0;
