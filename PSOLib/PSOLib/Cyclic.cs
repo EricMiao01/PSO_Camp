@@ -117,13 +117,22 @@ namespace PSOLib
         public double RestoreGap = 0.1; // 重生位置在奇點(GB)位置的接近程度
         protected int[] _ParticleCyclicStatus = null;
         protected int[] _ParticalStag = null;
+        protected int[] _ParticalStag1 = null;
+        protected int[] _ParticalStag2 = null;
         //protected double[] _MemoryC1 = null;
         //protected double[] _MemoryC2 = null;
         //public List<double> _SuccessC1 = new List<double>();
         //public List<double> _SuccessC2 = new List<double>();
         //public List<double> _delta_f = new List<double>();
-        public double AvgStag = 0;
+        //public double AvgStag = 0;
         #endregion
+
+        public double epsilon = 0.0;
+        public int cp = 2;
+        public double theta = 0.2;
+        public double Tc = 100000;
+        public double alpha = 0.5;
+        public double tau = 0.1;
 
         /// <summary>
         /// Swarm 建構子;
@@ -166,7 +175,7 @@ namespace PSOLib
 
             Fitness = fitness;
 
-            AvgStag = 0;
+            //AvgStag = 0;
 
             // 以下為cyclic增加的部份;
             _ParticleCyclicStatus = new int[SwarmSize];
@@ -176,9 +185,17 @@ namespace PSOLib
                 else
                     _ParticleCyclicStatus[i] = 0;
 
-            _ParticalStag = new int[SwarmSize];
+            //_ParticalStag = new int[SwarmSize];
+            //for (int i = 0; i < SwarmSize; i++) // 初始化停滯次數;
+            //    _ParticalStag[i] = 0;
+
+            _ParticalStag1 = new int[SwarmSize];
+            _ParticalStag2 = new int[SwarmSize];
             for (int i = 0; i < SwarmSize; i++) // 初始化停滯次數;
-                _ParticalStag[i] = 0;
+            {
+                _ParticalStag1[i] = 0;
+                _ParticalStag2[i] = 0;
+            }
 
             /*=========================================*/
             //_MemoryC1 = new double[10];
@@ -239,22 +256,24 @@ namespace PSOLib
                     /* ================================================ */
 
                 if (DoCheckParticle(_swarm.Particle[i1].Curr))
-                    UpdateFitness(_swarm.Particle[i1].Curr, _swarm.Particle[i1].ParticleBest);
+                    UpdateFitness(_swarm.Particle[i1].Curr, _swarm.Particle[i1].ParticleBest, epsilon);
             }
 
             ThisGeneration = 0;
+            epsilon = UpdateEpsilon(_swarm.Particle);
+
             System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             while (true)
             {
                 ThisGeneration++;
                 bool bEvolved = false;
-                int StagCnt = 0;
-                for (int i1 = 0; i1 < _swarm.Particle.Length; i1++)
-                {
-                    StagCnt += _ParticalStag[i1];
-                }
-                AvgStag = StagCnt / _swarm.Particle.Length;
+                //int StagCnt = 0;
+                //for (int i1 = 0; i1 < _swarm.Particle.Length; i1++)
+                //{
+                //    StagCnt += _ParticalStag[i1];
+                //}
+                //AvgStag = StagCnt / _swarm.Particle.Length;
 
                 // 0.計算W, if autoW
                 VelocityFactor();
@@ -299,7 +318,7 @@ namespace PSOLib
                         // 5.計算objective value
                         Curr.Fitness = Fitness(Curr);
                         // 6.更新PB/GB
-                        if (UpdateFitness(Curr, ParticleBest)) bEvolved = true;
+                        if (UpdateFitness(Curr, ParticleBest, epsilon)) bEvolved = true;
                     }
 
                     /////////////////////////////////////////////////
@@ -307,56 +326,68 @@ namespace PSOLib
                     if (_ParticleCyclicStatus[i2] == 0) continue; // 一般粒子不做任何變動;
                     PSOTuple tuple = GetCurr(i2);
 
-                    if (!bEvolved)
-                        _ParticalStag[i2]++;
-                    else
-                        _ParticalStag[i2] = 0;
+                    //if (!bEvolved)
+                    //    _ParticalStag[i2]++;
+                    //else
+                    //    _ParticalStag[i2] = 0;
 
-                    if (AvgStag < 0) continue;
+                    if (!bEvolved)
+                    {
+                        _ParticalStag1[i2]++;
+                        _ParticalStag2[i2]++;
+                    }
+                    else if (Curr.Convx > 0)
+                        _ParticalStag1[i2]++;
+
+                    
+                    if (_ParticleCyclicStatus[i2] == 1)
+                    {
+                        double NormalizeStag = (double)_ParticalStag1[i2] / (double)this.StagThreshold;
+                        double MutateRate = Utils.Sigmoid(NormalizeStag);
+
+                        // 100代沒變化, 1%機會變成發散; -> 改成利用sigmoid考慮停滯比例調整變異機率
+                        //if (_ParticalStag[i2] >= 100 && RAND_SEED.NextDouble() < 0.01)
+                        if (RAND_SEED.NextDouble() < MutateRate)
+                        {
+                            _ParticleCyclicStatus[i2] = 2; // 變異為發散粒子;
+                            _ParticalStag1[i2] = 0;
+                            _ParticalStag2[i2] = 0;
+                        }
+                    }
                     else
                     {
-                        if (_ParticleCyclicStatus[i2] == 1)
+                        // 發散時, 0.1%機會回到收歛; 並且從GB附近重生;
+                        double NormalizeStag = _ParticalStag2[i2] / (this.StagThreshold);
+                        double RestoreRate = Utils.Sigmoid(NormalizeStag);
+
+                        //if (_swarm.GroupBest.Convx == 0)
+                        //    RestoreRate = 0.4;
+
+                        //if (_swarm.Particle[i2].ParticleBest.Convx > 0) RestoreRate = 0.0001;
+                        if (RAND_SEED.NextDouble() < RestoreRate)
+                        //if (RAND_SEED.NextDouble() < 0.001)
                         {
-                            double NormalizeStag = _ParticalStag[i2] / this.StagThreshold;
-                            double MutateRate = Utils.Sigmoid(NormalizeStag);
-
-                            // 100代沒變化, 1%機會變成發散; -> 改成利用sigmoid考慮停滯比例調整變異機率
-                            //if (_ParticalStag[i2] >= 100 && RAND_SEED.NextDouble() < 0.01)
-                            if (RAND_SEED.NextDouble() < MutateRate)
+                            //Console.WriteLine("{0} change to exploitating.", i2);
+                            _ParticleCyclicStatus[i2] = 1; // 變異為收歛粒子;
+                            _ParticalStag1[i2] = 0;
+                            _ParticalStag2[i2] = 0;
+                            //從GB附近重生;
+                            for (int iX = 0; iX < tuple.X.Length; iX++)
                             {
-                                _ParticleCyclicStatus[i2] = 2; // 變異為發散粒子;
-                                _ParticalStag[i2] = 0;
-                            }
-                        }
-                        else
-                        {
-                            // 發散時, 0.1%機會回到收歛; 並且從GB附近重生;
-                            double NormalizeStag = _ParticalStag[i2] / (this.StagThreshold);
-                            double RestoreRate = Utils.Sigmoid(NormalizeStag);
-
-                            //if (_swarm.GroupBest.Convx == 0)
-                            //    RestoreRate = 0.4;
-
-                            //if (_swarm.Particle[i2].ParticleBest.Convx > 0) RestoreRate = 0.0001;
-                            if (RAND_SEED.NextDouble() < RestoreRate)
-                            //if (RAND_SEED.NextDouble() < 0.001)
-                            {
-                                //Console.WriteLine("{0} change to exploitating.", i2);
-                                _ParticleCyclicStatus[i2] = 1; // 變異為收歛粒子;
-                                _ParticalStag[i2] = 0;
-                                // 從GB附近重生;
-                                for (int iX = 0; iX < tuple.X.Length; iX++)
-                                {
-                                    tuple.X[iX] = GetGroupBest().X[iX] + (_swarm.Particle[i2].ParticleBest.X[iX]
-                                                  - GetGroupBest().X[iX]) * RAND_SEED.NextDouble() * this.RestoreGap;
-                                    if (tuple.X[iX] < _MinX[iX]) tuple.X[iX] = _MinX[iX];
-                                    if (tuple.X[iX] > _MaxX[iX]) tuple.X[iX] = _MaxX[iX];
-                                }
+                                tuple.X[iX] = GetGroupBest().X[iX] + (_swarm.Particle[i2].ParticleBest.X[iX]
+                                                - GetGroupBest().X[iX]) * RAND_SEED.NextDouble() * this.RestoreGap;
+                                if (tuple.X[iX] < _MinX[iX]) tuple.X[iX] = _MinX[iX];
+                                if (tuple.X[iX] > _MaxX[iX]) tuple.X[iX] = _MaxX[iX];
                             }
                         }
                     }
+                    
                     /////////////////////////////////////////////////
                 }
+
+                epsilon = UpdateEpsilon(_swarm.Particle);
+                //Console.WriteLine(epsilon);
+                //ShowParticleCount();
 
                 if (bEvolved)
                 {
@@ -460,7 +491,7 @@ namespace PSOLib
         }
 
         // 6.更新PB/GB
-        protected bool UpdateFitness(PSOTuple Curr, PSOTuple ParticleBest)
+        protected bool UpdateFitness(PSOTuple Curr, PSOTuple ParticleBest, double epsilon)
         {
             // revise for cec2020rw
             ConstractResult constraint = GetConstraintResult(Curr);
@@ -505,8 +536,8 @@ namespace PSOLib
             }
             /* ======================================================== */
 
-            if (double.IsNaN(ParticleBest.Fitness) || Curr.IsBetter(ParticleBest)) Curr.CopyTo(ParticleBest);
-            if (double.IsNaN(_swarm.GroupBest.Fitness) || Curr.IsBetter(_swarm.GroupBest))
+            if (double.IsNaN(ParticleBest.Fitness) || Curr.IsBetter(ParticleBest, epsilon)) Curr.CopyTo(ParticleBest);
+            if (double.IsNaN(_swarm.GroupBest.Fitness) || Curr.IsBetter(_swarm.GroupBest, epsilon))
             {
                 Curr.CopyTo(_swarm.GroupBest);
                 return true;
@@ -540,12 +571,13 @@ namespace PSOLib
                 if (bToExpi) // if (True) >>> 全部粒子均變為 Expi 模式 (!? 也包括原本設定 "永遠" 為PSO表現的粒子!? )
                 {
                     _ParticleCyclicStatus[i] = 1;
-                    _ParticalStag[i] = 0;
+                    _ParticalStag1[i] = 0;
+                    _ParticalStag2[i] = 0;
                     //break;
                 }
                 else
                     _ParticleCyclicStatus[i] = 2;
-                    //break;
+                //break;
                 //}
                 //else
                 //{
@@ -558,6 +590,26 @@ namespace PSOLib
                 //        _ParticleCyclicStatus[i] = 2;
                 //}
             }
+        }
+
+        protected virtual double UpdateEpsilon(ParticleUnit[] population)
+        {
+            if (ThisGeneration == 0)
+            {
+                int index = (int)(population.Length * theta);
+                double convx_theta = population.OrderByDescending(x => x.Curr.Convx).ToArray()[(int)(population.Length * theta)].Curr.Convx;
+                return convx_theta;
+            }
+
+            double convx_max = population.Max(x => x.Curr.Convx);
+            double PFS = (double)population.Count(x => x.Curr.Convx == 0) / (double)population.Length;
+            double _epsilon = 0.0;
+            if (PFS < alpha && ThisGeneration < Tc) _epsilon = epsilon * Math.Pow((1 - ThisGeneration / (Tc)), cp);
+            else if (PFS >= alpha && ThisGeneration < Tc) _epsilon = (1 + tau) * convx_max;
+            else if (ThisGeneration >= Tc) epsilon = 0.0;
+
+            //_epsilon = 0.0; // 不知道為甚麼設計成0更好?
+            return _epsilon;
         }
 
         protected void ShowParticleCount()
