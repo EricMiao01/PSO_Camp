@@ -21,20 +21,20 @@ namespace PSOMain
             // *** CEC2020 series ***
             List<Problem> problems = new List<Problem>
             {
-                new RC15_SpeedReducer(),
+                //new RC15_SpeedReducer(),
                 //new RC16_IndustRefrig(),
                 //new RC17_SpringDesign(),
                 //new RC18_PressureVessel(),
                 //new RC19_WeldedBeam(),
                 //new RC20_ThreebarTruss(),
-                new RC21_DiskClutch(),
-                new RC22_PlanetaryGear(),
-                new RC23_StepconePulley(),
-                new RC24_RobotGripper(),
-                new RC25_ThrustBearing(),
-                new RC26_GearBox(),
-                new RC27_10barTruss(),
-                new RC28_RollingBearing(),
+                //new RC21_DiskClutch(),
+                //new RC22_PlanetaryGear(),
+                //new RC23_StepconePulley(),
+                //new RC24_RobotGripper(),
+                //new RC25_ThrustBearing(),
+                //new RC26_GearBox(),
+                //new RC27_10barTruss(),
+                //new RC28_RollingBearing(),
                 new RC29_GasCompressor(),
                 new RC30_CompressionString(),
                 new RC31_GearTrain(),
@@ -102,10 +102,10 @@ namespace PSOMain
                                 //PSO pso = new PSO(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
                                 //NLP pso = new NLP(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
                                 //Cyclic pso = new Cyclic(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
-                                //DECyc pso = new DECyc(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
+                                DECyc pso = new DECyc(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
 
                                 //Cyclic_D pso = new Cyclic_D(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
-                                CycDE pso = new CycDE(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
+                                 //CycDE pso = new CycDE(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
 
                                 // Cyclic系列專用參數:
                                 //pso.StagThreshold = 100;    // 幾個迭代無異動就視為停滯粒子;

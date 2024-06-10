@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace PSOLib
 {
@@ -131,6 +132,14 @@ namespace PSOLib
         //public List<double> _SuccessC2 = new List<double>();
         //public List<double> _delta_f = new List<double>();
         public int k = 0;
+
+
+        public double epsilon = 0.0;
+        public int cp = 2;
+        public double theta = 0.2;
+        public double Tc = 100000;
+        public double alpha = 0.5;
+        public double tau = 0.1;
         #endregion
 
         /// <summary>
@@ -177,7 +186,7 @@ namespace PSOLib
             // 以下為cyclic增加的部份;
             _ParticleCyclicStatus = new int[SwarmSize];
             for (int i = 0; i < SwarmSize; i++)
-                if (i < SwarmSize * 1.0)
+                if (i < SwarmSize * 0.9)
                     _ParticleCyclicStatus[i] = 1; // 設置90%為Cyclic;
                 else
                     _ParticleCyclicStatus[i] = 0;
@@ -248,17 +257,49 @@ namespace PSOLib
                         _swarm.Particle[i1].Curr.MemoryC2[i2] = 2.0;
                         _swarm.Particle[i1].Curr.MemoryW[i2] = 1.0;
                     }
-                    /* ================================================ */
+                     /* ================================================ */
 
                 if (DoCheckParticle(_swarm.Particle[i1].Curr))
                     UpdateFitness(_swarm.Particle[i1].Curr, _swarm.Particle[i1].ParticleBest);
             }
 
+
             ThisGeneration = 0;
+            //epsilon = UpdateEpsilon(_swarm.Particle);
+
+            //for (int i1 = 0; i1 < _swarm.Particle.Length; i1 ++)
+            //{
+            //    if (DoCheckParticle(_swarm.Particle[i1].Curr))
+            //        UpdateFitness(_swarm.Particle[i1].Curr, _swarm.Particle[i1].ParticleBest, epsilon);
+            //}
+
+
             System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             while (true)
             {
+                
+                for (int i = 0; i < _swarm.Particle.Length; i++)
+                {
+                    if (_swarm.Particle[i].Curr.ParticleType == 1)
+                    {
+                        // 如果 last x 有紀錄，當下的 x = last x
+                        if (_swarm.Particle[i].Curr.IsUpdate == true)
+                        {
+                            for (int j = 0; j < _swarm.Particle[i].Curr.X.Length; j++)
+                            {
+                                _swarm.Particle[i].Curr.X[j] = _swarm.Particle[i].Curr.LastX[j];
+                            }
+                            _swarm.Particle[i].Curr.Fitness = _swarm.Particle[i].Curr.LastFitness;
+                            _swarm.Particle[i].Curr.Convx = _swarm.Particle[i].Curr.LastConvx;
+                            //UpdateFitness(_population.Individual[i]);
+                            _swarm.Particle[i].Curr.IsUpdate = false;
+                        }
+                    }
+                }
+            
+            
+
                 ThisGeneration++;
                 bool bEvolved = false;
                 // 0.計算W, if autoW
@@ -361,6 +402,8 @@ namespace PSOLib
                     /////////////////////////////////////////////////
                 }
 
+                //epsilon = UpdateEpsilon(_swarm.Particle);
+                //Console.WriteLine(epsilon);
                 //ShowParticleCount();
 
                 if (bEvolved)
@@ -544,5 +587,26 @@ namespace PSOLib
             Console.WriteLine("*** Particle Size: totol({0}), 0({1}), 1({2}), 2({3})", p0 + p1 + p2, p0, p1, p2);
         }
         #endregion
+
+        // update epsilon -> 有潛在的不一致風險?
+        protected virtual double UpdateEpsilon(ParticleUnit[] population)
+        {
+            if (ThisGeneration == 0)
+            {
+                int index = (int)(population.Length * theta);
+                double convx_theta = population.OrderByDescending(x => x.Curr.Convx).ToArray()[(int)(population.Length * theta)].Curr.Convx;
+                return convx_theta;
+            }
+
+            double convx_max = population.Max(x => x.Curr.Convx);
+            double PFS = (double)population.Count(x => x.Curr.Convx == 0) / (double)population.Length;
+            double _epsilon = 0.0;
+            if (PFS < alpha && ThisGeneration < Tc) _epsilon = epsilon * Math.Pow((1 - ThisGeneration / (Tc)), cp);
+            else if (PFS >= alpha && ThisGeneration < Tc) _epsilon = (1 + tau) * convx_max;
+            else if (ThisGeneration >= Tc) epsilon = 0.0;
+
+            //epsilon = 0.0; // 不知道為甚麼設計成0更好?
+            return _epsilon;
+        }
     }
 }

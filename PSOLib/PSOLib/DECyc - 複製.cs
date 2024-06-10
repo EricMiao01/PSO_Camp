@@ -131,19 +131,19 @@ namespace PSOLib
                 }
             }
             /* ============================================================= */
-            else
-            {
-                if (Curr.IsUpdate)
-                {
-                    for (int j = 0; j < Curr.X.Length; j++)
-                    {
-                        Curr.X[j] = Curr.LastX[j];
-                    }
-                    Curr.Fitness = Curr.LastFitness;
-                    Curr.Convx = Curr.LastConvx;
-                    Curr.IsUpdate = false;
-                }
-            }
+            //else
+            //{
+            //    if (Curr.IsUpdate)
+            //    {
+            //        for (int j = 0; j < Curr.X.Length; j++)
+            //        {
+            //            Curr.X[j] = Curr.LastX[j];
+            //        }
+            //        Curr.Fitness = Curr.LastFitness;
+            //        Curr.Convx = Curr.LastConvx;
+            //        Curr.IsUpdate = false;
+            //    }
+            //}
             if (double.IsNaN(ParticleBest.Fitness) || Curr.IsBetter(ParticleBest)) Curr.CopyTo(ParticleBest);
             if (double.IsNaN(_swarm.GroupBest.Fitness) || Curr.IsBetter(_swarm.GroupBest))
             {

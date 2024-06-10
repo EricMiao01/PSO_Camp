@@ -221,16 +221,15 @@ namespace PSOLib
             this.Fitness = fx;
         }
 
-        public bool IsBetter(PSOTuple tuple)
+        public bool IsBetter(PSOTuple tuple, double epsilon=0.0)
         {
-            
+
             // 要加入 epsilon 技術的話可以新增在這邊!!!!!!!!!! 以後要 adaptive
-            if (this.Convx < tuple.Convx) return true;            
-            if (this.Convx == tuple.Convx && this.Fitness < tuple.Fitness ) return true;
-            //double epsilon = 0.00;
-            //if ((this.Convx < epsilon && tuple.Convx < epsilon) && this.Fitness < tuple.Fitness) return true;
+            if (this.Convx < tuple.Convx) return true;
+            if (this.Convx == tuple.Convx && this.Fitness < tuple.Fitness) return true;
+            //epsilon = 0.00;
+            if ((this.Convx < epsilon && tuple.Convx < epsilon) && this.Fitness < tuple.Fitness) return true;
             return false;
-            
 
             //double epsilon = 0.0;
             //if (this.Convx <= epsilon && tuple.Convx <= epsilon)
