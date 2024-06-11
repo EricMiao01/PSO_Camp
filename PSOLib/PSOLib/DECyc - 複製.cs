@@ -18,7 +18,7 @@ namespace PSOLib
                :base(SwarmSize, MaxX, MinX, MaxV, MinV, fitness, MaxGen, MaxSec, C1, C2, W, Ws, We, AutoW)
         {
             MoveParticle += DoMoveParticle;
-            DE_MutateRate = 1;
+            DE_MutateRate = 0.2;
             Fitness = fitness;
         }
 

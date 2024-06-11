@@ -278,7 +278,7 @@ namespace PSOLib
             watch.Start();
             while (true)
             {
-                
+                /*
                 for (int i = 0; i < _swarm.Particle.Length; i++)
                 {
                     if (_swarm.Particle[i].Curr.ParticleType == 1)
@@ -297,7 +297,7 @@ namespace PSOLib
                         }
                     }
                 }
-            
+                */
             
 
                 ThisGeneration++;
