@@ -217,7 +217,7 @@ namespace PSOLib
                         if (Math.Abs(_h[i]) > 1e-4) n++;
                     }
                 }
-                this.Convx = n / const_num;
+                this.Convx = n;
             }
             this.Fitness = fx;
         }

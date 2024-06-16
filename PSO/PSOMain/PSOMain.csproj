@@ -43,6 +43,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CEC2020\RC01_HeatExchangerNetworkDesign_case1.cs" />
+    <Compile Include="CEC2020\RC02_HeatExchangerNetworkDesign_case2.cs" />
+    <Compile Include="CEC2020\RC03_OptimalOperationOfAlkylationUnit.cs" />
+    <Compile Include="CEC2020\RC04_ReactorNetworkDesign_RND.cs" />
+    <Compile Include="CEC2020\RC05_HaverlyPooling.cs" />
+    <Compile Include="CEC2020\RC06_BlendingPoolingSeparation.cs" />
+    <Compile Include="CEC2020\RC07_N_ButaneNonsharpSeparation.cs" />
+    <Compile Include="CEC2020\RC08_ProcessSynthesis.cs" />
+    <Compile Include="CEC2020\RC09_ProcessSynthesisAndDesign.cs" />
+    <Compile Include="CEC2020\RC10_ProcessFlowSheeting.cs" />
+    <Compile Include="CEC2020\RC11_TwoReactor.cs" />
+    <Compile Include="CEC2020\RC12_ProcessSynthesis.cs" />
+    <Compile Include="CEC2020\RC13_ProcessDesign.cs" />
+    <Compile Include="CEC2020\RC14_MultiProductBatchPlant.cs" />
     <Compile Include="CEC2020\RC15_SpeedReducer.cs" />
     <Compile Include="CEC2020\RC16_IndustRefrig.cs" />
     <Compile Include="CEC2020\RC17_SpringDesign.cs" />

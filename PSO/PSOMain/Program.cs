@@ -21,6 +21,20 @@ namespace PSOMain
             // *** CEC2020 series ***
             List<Problem> problems = new List<Problem>
             {
+                //new RC01(),
+                //new RC02(),
+                //new RC03(),
+                //new RC04(),
+                //new RC05(),
+                //new RC06(),
+                //new RC07(),
+                new RC08(),
+                new RC09(),
+                new RC10(),
+                new RC11(),
+                new RC12(),
+                new RC13(),
+                new RC14(),
                 new RC15_SpeedReducer(),
                 new RC16_IndustRefrig(),
                 new RC17_SpringDesign(),
@@ -100,9 +114,9 @@ namespace PSOMain
 
                                 // 絕對要有的, 在建構時傳入;
                                 //PSO pso = new PSO(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
-                                //NLP pso = new NLP(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
+                                NLP pso = new NLP(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
                                 //Cyclic pso = new Cyclic(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
-                                DECyc pso = new DECyc(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
+                                //DECyc pso = new DECyc(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
 
                                 //Cyclic_D pso = new Cyclic_D(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
                                 //CycDE pso = new CycDE(50, prob.x_u, prob.x_l, prob.v_u, prob.v_l, prob.GetFitness, prob.MaxFES);
@@ -126,7 +140,7 @@ namespace PSOMain
                                 if (isTesting == false) // 實驗的話進行存檔
                                 {
                                     // 把不同題目的實驗數據分開比較好管理
-                                    string filePath = string.Format("cyclic_experiment_results_{0}_test.txt", prob.name());
+                                    string filePath = string.Format("nlp_experiment_results_{0}_test.txt", prob.name());
                                     WriteResultToFile(pso.GetGroupBest(), i, prob.name(), filePath);
                                 }
                             }
